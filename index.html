@@ -41,8 +41,6 @@
   .card button:hover { background: rgba(244,236,228,.08); border-color: rgba(244,236,228,.85); }
   .card button:disabled { opacity: .4; cursor: default; }
   .card small { opacity: .5; letter-spacing: .2em; font-size: 13px; }
-  #endCard { opacity: 0; pointer-events: none; }
-  #endCard.show { opacity: 1; pointer-events: auto; }
 
   /* 操作提示 */
   #hint { position: fixed; top: 22px; left: 50%; transform: translateX(-50%); z-index: 4; text-align: center;
@@ -58,15 +56,79 @@
   #joy i { position: absolute; left: 50%; top: 50%; width: 50px; height: 50px; margin: -25px 0 0 -25px; border-radius: 50%;
     background: rgba(255,255,255,.35); }
   body.touch.playing #joy { display: block; }
+
+  /* 對話名字、繼續提示 */
+  .nm { display: inline-block; font-size: .72em; letter-spacing: .25em; padding: 2px 6px 2px calc(10px + .25em); margin-right: 14px;
+    border: 1px solid rgba(244,236,228,.4); vertical-align: middle; }
+  .nm.dad { color: #a9cdf0; border-color: rgba(169,205,240,.55); }
+  .nm.mom { color: #f0b3bf; border-color: rgba(240,179,191,.55); }
+  .nm.me { color: #f2d48a; border-color: rgba(242,212,138,.55); }
+  #dlgNext { position: absolute; right: 28px; bottom: 18px; font-size: 13px; letter-spacing: .2em; opacity: 0; transition: opacity .4s; }
+  #dlgNext.on { opacity: .7; animation: bob 1.2s ease-in-out infinite; }
+  @keyframes bob { 50% { transform: translateY(3px); } }
+  body.talking #barBot { pointer-events: auto; cursor: pointer; }
+  #black.fast { transition: opacity .6s ease; }
+
+  /* 章節標題 */
+  #chapTitle { position: fixed; inset: 0; z-index: 11; display: flex; flex-direction: column; align-items: center; justify-content: center;
+    gap: 18px; opacity: 0; transition: opacity 1.4s ease; pointer-events: none; }
+  #chapTitle.on { opacity: 1; }
+  #chapTitle small { letter-spacing: .6em; font-size: 15px; opacity: .7; margin-left: .6em; }
+  #chapTitle h2 { margin: 0 0 0 .4em; font-weight: 300; font-size: clamp(30px, 5.5vw, 56px); letter-spacing: .4em; }
+
+  /* 目標、互動提示、暫停 */
+  #obj { position: fixed; left: 18px; top: 58px; z-index: 6; max-width: calc(100% - 36px); opacity: 0; transition: opacity .8s;
+    text-shadow: 0 1px 6px rgba(0,0,0,.9); pointer-events: none; border-left: 2px solid rgba(232,180,140,.8); padding: 4px 0 4px 12px; }
+  #obj.on { opacity: 1; }
+  #obj small { font-size: 11px; letter-spacing: .3em; opacity: .7; }
+  #objMain { font-size: 16px; letter-spacing: .12em; margin-top: 2px; }
+  #objSub { font-size: 13px; opacity: .8; margin-top: 2px; letter-spacing: .1em; }
+  #prompt { position: fixed; left: 50%; bottom: calc(var(--bar) + 24px); transform: translateX(-50%); z-index: 6; font: inherit;
+    font-size: 15px; letter-spacing: .15em; color: var(--ink); background: rgba(0,0,0,.72); border: 1px solid rgba(255,220,180,.55);
+    padding: 10px 22px; border-radius: 2px; cursor: pointer; opacity: 0; pointer-events: none; transition: opacity .3s; }
+  #prompt.on { opacity: 1; pointer-events: auto; }
+  #pauseBtn { position: fixed; top: 14px; left: 14px; z-index: 30; font: inherit; font-size: 13px; letter-spacing: .1em; color: var(--ink);
+    background: rgba(0,0,0,.35); border: 1px solid rgba(255,255,255,.25); padding: 6px 12px; border-radius: 2px; cursor: pointer; display: none; }
+  body.playing #pauseBtn { display: block; }
+
+  /* 回憶碎片卡片 */
+  #memo { position: fixed; left: 50%; top: 50%; transform: translate(-50%, -46%); z-index: 15; width: min(520px, calc(100% - 32px));
+    box-sizing: border-box; background: rgba(0,0,0,.88); border: 1px solid rgba(255,214,170,.35); padding: 28px 28px 20px; text-align: center;
+    opacity: 0; pointer-events: none; transition: opacity .5s, transform .5s; }
+  #memo.on { opacity: 1; pointer-events: auto; transform: translate(-50%, -50%); }
+  #memo .mt { font-size: 13px; letter-spacing: .4em; color: #f1c79b; }
+  #memo p { font-size: clamp(16px, 2.2vw, 20px); line-height: 1.9; letter-spacing: .08em; margin: 16px 0 18px; }
+  #memo small { font-size: 12px; opacity: .55; letter-spacing: .2em; }
+
+  /* 章節選擇、完成、暫停 */
+  .card h2 { font-weight: 300; letter-spacing: .4em; margin: 0 0 0 .4em; font-size: clamp(24px, 4vw, 34px); }
+  .card .btns { display: flex; flex-wrap: wrap; gap: 14px; justify-content: center; padding: 0 16px; }
+  .card p { margin: 0; letter-spacing: .15em; opacity: .8; }
+  #chapList { display: flex; flex-direction: column; gap: 12px; width: min(620px, calc(100% - 32px)); }
+  .card button.chap { display: flex; align-items: center; gap: 18px; text-align: left; letter-spacing: .08em; padding: 16px 20px; width: 100%; }
+  .chap .cn { font-size: 14px; letter-spacing: .3em; color: #e8b48c; white-space: nowrap; }
+  .chap .cb { flex: 1; display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+  .chap .ct { font-weight: 500; font-size: 18px; letter-spacing: .2em; }
+  .chap .cd { font-style: normal; font-size: 13px; opacity: .65; }
+  .chap .cs { font-size: 12px; opacity: .7; text-align: right; white-space: nowrap; line-height: 1.6; }
+  .card button.chap:disabled { opacity: .35; }
+  #pauseCard { background: rgba(0,0,0,.72); }
+  .card.hide { opacity: 0; pointer-events: none; }
+  @media (max-width: 520px) { .card button.chap { flex-wrap: wrap; gap: 8px 14px; } .chap .cs { text-align: left; } }
 </style>
 </head>
 <body>
 <div id="barTop" class="bar"></div>
-<div id="barBot" class="bar"><div id="sub" class="sub"></div></div>
+<div id="barBot" class="bar"><div id="sub" class="sub"></div><span id="dlgNext">繼續 ▾</span></div>
 <div id="black"><div id="blackSub" class="sub"></div></div>
-<div id="hint"><div>往夕陽的方向走，去找爸爸媽媽</div><div class="k" id="keys">W A S D／方向鍵 移動　·　Shift 跑步　·　拖曳滑鼠 轉視角</div></div>
+<div id="chapTitle"><small id="ctNo"></small><h2 id="ctName"></h2></div>
+<div id="hint"><div id="hintMain"></div><div class="k" id="keys">W A S D／方向鍵 移動　·　Shift 跑步　·　E 互動　·　拖曳滑鼠 轉視角　·　Esc 暫停</div></div>
+<div id="obj"><small>目標</small><div id="objMain"></div><div id="objSub"></div></div>
+<button id="prompt"></button>
+<div id="memo"><div class="mt" id="memoT"></div><p id="memoX"></p><small>點擊或按 E 繼續</small></div>
 <div id="joy"><i></i></div>
 <button id="mute">聲音：開</button>
+<button id="pauseBtn">暫停</button>
 
 <div id="titleCard" class="card">
   <h1>爸爸，媽媽</h1>
@@ -74,10 +136,29 @@
   <button id="startBtn" disabled>載入中</button>
   <small>建議開啟聲音</small>
 </div>
-<div id="endCard" class="card">
+<div id="chapCard" class="card hide">
+  <h2>故事模式</h2>
+  <div class="line"></div>
+  <div id="chapList"></div>
+  <button id="backBtn">返回</button>
+</div>
+<div id="doneCard" class="card hide">
+  <small id="dnNo"></small>
+  <h1 id="dnName"></h1>
+  <div class="line"></div>
+  <p id="dnStat"></p>
+  <div class="btns"><button id="nextBtn"></button><button id="dnMenuBtn">章節選擇</button></div>
+</div>
+<div id="pauseCard" class="card hide">
+  <h2>暫停</h2>
+  <div class="line"></div>
+  <div class="btns"><button id="resumeBtn">繼續遊戲</button><button id="restartBtn">重新開始本章</button><button id="pChapBtn">章節選擇</button></div>
+</div>
+<div id="endCard" class="card hide">
   <h1>爸爸，媽媽</h1>
   <div class="line"></div>
-  <button id="againBtn">再玩一次</button>
+  <p>故事完結　謝謝你玩到最後</p>
+  <div class="btns"><button id="endChapBtn">章節選擇</button><button id="endTitleBtn">回主選單</button></div>
 </div>
 
 <script>
@@ -128,7 +209,7 @@ let walkDone = false;
 const params = new URLSearchParams(location.search);
 const SHOT = params.get('shot');               // 除錯用：walk / end / hug
 const isTouch = matchMedia('(pointer: coarse)').matches;
-if (isTouch) { document.body.classList.add('touch'); document.getElementById('keys').textContent = '左下搖桿 移動　·　右側拖曳 轉視角'; }
+if (isTouch) { document.body.classList.add('touch'); document.getElementById('keys').textContent = '左下搖桿 移動　·　右側拖曳 轉視角　·　左上 暫停'; }
 const LOW = isTouch;
 const $ = (id) => document.getElementById(id);
 const sleep = (ms) => new Promise(r => setTimeout(r, ms));
@@ -169,7 +250,7 @@ float terrainH(vec2 p){
 float fieldMask(vec2 p){
   float endZ = -147.0 + 2.5*sin(p.x*0.21) + 1.5*sin(p.x*0.07+2.0);
   float side = 66.0 + 3.0*sin(p.y*0.13);
-  return step(endZ, p.y) * step(p.y, 30.0) * step(abs(p.x), side);
+  return step(endZ, p.y) * step(p.y, 30.0) * step(abs(p.x), side) * step(2.4, length(p - vec2(7.0, -84.0)));
 }
 `;
 
@@ -204,11 +285,10 @@ sky.scale.setScalar(10000);
   const su = sky.material.uniforms;
   su.turbidity.value = 10; su.rayleigh.value = 3.2; su.mieCoefficient.value = 0.005; su.mieDirectionalG.value = 0.82;
   su.sunPosition.value.copy(sunDir);
-  const pm = new THREE.PMREMGenerator(renderer);
-  const envScene = new THREE.Scene(); envScene.add(sky);
-  scene.environment = pm.fromScene(envScene).texture;
-  scene.add(sky);
 }
+const pmrem = new THREE.PMREMGenerator(renderer);
+const envScene = new THREE.Scene();
+scene.add(sky);
 
 /* ---------- 燈光 ---------- */
 const sun = new THREE.DirectionalLight(0xffb27c, 2.4);
@@ -217,7 +297,8 @@ sun.shadow.mapSize.set(LOW ? 1024 : 2048, LOW ? 1024 : 2048);
 Object.assign(sun.shadow.camera, { left: -14, right: 14, top: 14, bottom: -14, near: 1, far: 220 });
 sun.shadow.bias = -0.0004; sun.shadow.normalBias = 0.03;
 scene.add(sun, sun.target);
-scene.add(new THREE.HemisphereLight(0xb59ac8, 0x4a2a1c, 0.9));
+const hemi = new THREE.HemisphereLight(0xb59ac8, 0x4a2a1c, 0.9);
+scene.add(hemi);
 
 /* ---------- 共用 shader 片段 ---------- */
 const FRAG_HEAD = `uniform vec3 uSunV; uniform vec3 uSunCol; uniform float uTrans;\n`;
@@ -854,7 +935,7 @@ function buildPerson(c) {
   const hair = new THREE.Group(); head.add(hair);
   mk(hairCapGeo({ hw, hh, hd, ...c.hair }), new THREE.MeshStandardMaterial({ color: c.hairHex, roughness: .7 }), hair);
   mk(hairGeo({ hw, hh, hd, ...c.hair }), hairMaterial(c.hairHex, c.hair.sway ?? 0.004), hair, null, null, null, false);
-  const sh = [], el = [], hp = [], kn = [], an = [];
+  const sh = [], el = [], hp = [], kn = [], an = [], hands = [];
   for (const i of [0, 1]) {
     const s = side(i);
     const S = new THREE.Group(); S.position.set(s * c.shX, c.shY, 0); spine.add(S); sh.push(S);
@@ -864,7 +945,7 @@ function buildPerson(c) {
     if (c.cuff) mk((() => { const g = new THREE.TorusGeometry(.046, .011, 8, 24); g.rotateX(Math.PI / 2); return g; })(), c.shirt, S, [0, -c.armU + 0.035, 0]);
     const E = new THREE.Group(); E.position.y = -c.armU; S.add(E); el.push(E);
     mk(limbGeo(c.armF, 0.042, 0.029, 20, 0.14, 0.75), c.fore, E);
-    const Hd = new THREE.Group(); Hd.position.y = -c.armF; Hd.rotation.y = s * 0.1; E.add(Hd);
+    const Hd = new THREE.Group(); Hd.position.y = -c.armF; Hd.rotation.y = s * 0.1; E.add(Hd); hands.push(Hd);
     mk(handGeo(s), skinMat, Hd);
     const Hp = new THREE.Group(); Hp.position.set(s * 0.088, -0.045, 0); hips.add(Hp); hp.push(Hp);
     mk(limbGeo(c.th, 0.088, 0.056, 20, 0.08, 0.7), c.thigh, Hp);
@@ -875,7 +956,7 @@ function buildPerson(c) {
     mk(shoeGeo(), c.shoe, A);
   }
   scene.add(root);
-  return { root, body, hips, spine, neck, head, hair, sh, el, hp, kn, an, c, cur: basePose(), rate: 14, yaw: 0 };
+  return { root, body, hips, spine, neck, head, hair, sh, el, hp, kn, an, hands, c, cur: basePose(), rate: 14, yaw: 0 };
 }
 function applyPose(P) {
   const q = P.cur, c = P.c;
@@ -949,6 +1030,145 @@ placeP(mom, MOM_IDLE.x, MOM_IDLE.y, Math.PI);
 const player = { x: 0, z: 6, yaw: Math.PI, tyaw: Math.PI, speed: 0, phase: 0 };
 placeP(kid, player.x, player.z, player.yaw);
 
+/* ============================== 故事模式用的物件 ============================== */
+const UPV = new THREE.Vector3(0, 1, 0);
+// 花田中間的大樹（第二章躲雨的地方）
+const TREE = new THREE.Vector2(7, -84);
+function blobGeo(seed) {
+  const g = new THREE.IcosahedronGeometry(1, 4), p = g.attributes.position, col = [], r = rng(seed);
+  const a = r() * 6, b = r() * 6;
+  for (let i = 0; i < p.count; i++) {
+    const v = new THREE.Vector3().fromBufferAttribute(p, i);
+    const n = 1 + 0.14 * Math.sin(v.x * 4.3 + a + v.y * 3.1) * Math.cos(v.z * 3.9 - v.y * 2.3 + b) + 0.05 * Math.sin(v.x * 11 + v.z * 9 + a);
+    v.multiplyScalar(n); p.setXYZ(i, v.x, v.y, v.z);
+    const k = 0.5 + 0.5 * (v.y * .5 + .5); col.push(0.03 * k, 0.07 * k, 0.022 * k);
+  }
+  g.setAttribute('color', new THREE.Float32BufferAttribute(col, 3)); g.computeVertexNormals();
+  return g;
+}
+{
+  const g = new THREE.Group(); g.position.set(TREE.x, H(TREE.x, TREE.y) - 0.15, TREE.y);
+  const bark = addRim(new THREE.MeshStandardMaterial({ color: 0x3a2a1e, roughness: .95 }), 0.3);
+  const trunk = new THREE.Mesh(latheGeo([[.0001, 6.2], [.22, 5.9], [.32, 4.6], [.4, 2.8], [.5, 1.0], [.8, 0.1], [.95, 0]].reverse(), 16), bark);
+  trunk.castShadow = true; trunk.receiveShadow = true; g.add(trunk);
+  const r = rng(5);
+  for (let k = 0; k < 6; k++) {
+    const len = 2.2 + r() * 1.6, br = new THREE.Mesh(new THREE.CylinderGeometry(0.06, 0.16, len, 7), bark);
+    const a = k / 6 * Math.PI * 2 + r(), tilt = 0.7 + r() * 0.4;
+    br.geometry.translate(0, len / 2, 0);
+    br.position.set(0, 3.4 + r() * 1.4, 0); br.rotation.set(0, a, tilt, 'YXZ'); br.castShadow = true; g.add(br);
+  }
+  const leaf = addRim(new THREE.MeshStandardMaterial({ vertexColors: true, roughness: .85 }), 0.5);
+  for (let k = 0; k < 11; k++) {
+    const a = r() * Math.PI * 2, d = k === 0 ? 0 : 1.6 + r() * 2.2, s = 1.8 + r() * 1.3;
+    const m = new THREE.Mesh(blobGeo(k + 40), leaf);
+    m.position.set(Math.cos(a) * d, 5.6 + r() * 1.8 - d * 0.25, Math.sin(a) * d); m.scale.set(s, s * 0.8, s);
+    m.castShadow = true; m.receiveShadow = true; g.add(m);
+  }
+  scene.add(g);
+}
+
+// 回憶碎片的光球
+const glowTex = (() => {
+  const c = document.createElement('canvas'); c.width = c.height = 128; const g = c.getContext('2d');
+  const gr = g.createRadialGradient(64, 64, 0, 64, 64, 64);
+  gr.addColorStop(0, 'rgba(255,255,255,1)'); gr.addColorStop(0.25, 'rgba(255,230,190,.55)'); gr.addColorStop(1, 'rgba(255,200,140,0)');
+  g.fillStyle = gr; g.fillRect(0, 0, 128, 128);
+  return new THREE.CanvasTexture(c);
+})();
+const beamMat = new THREE.ShaderMaterial({
+  transparent: true, depthWrite: false, blending: THREE.AdditiveBlending, side: THREE.DoubleSide, uniforms: { uTime: U.uTime },
+  vertexShader: `varying vec2 vUv; void main(){ vUv = uv; gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0); }`,
+  fragmentShader: `uniform float uTime; varying vec2 vUv;
+    void main(){ float a = pow(1.0 - vUv.y, 2.2) * 0.5 * (0.8 + 0.2 * sin(uTime * 3.0)); gl_FragColor = vec4(vec3(1.0, 0.8, 0.55) * a * 3.0, a); }`,
+});
+function makeOrb() {
+  const g = new THREE.Group();
+  g.add(new THREE.Mesh(new THREE.SphereGeometry(0.085, 20, 14), new THREE.MeshBasicMaterial({ color: new THREE.Color(1, 0.8, 0.55).multiplyScalar(16) })));
+  const halo = new THREE.Sprite(new THREE.SpriteMaterial({ map: glowTex, color: new THREE.Color(1, 0.82, 0.6).multiplyScalar(2.2), blending: THREE.AdditiveBlending, depthWrite: false, transparent: true }));
+  halo.scale.setScalar(1.2); g.add(halo);
+  const beam = new THREE.Mesh(new THREE.CylinderGeometry(0.035, 0.1, 10, 12, 1, true), beamMat); beam.position.y = 5; g.add(beam);
+  g.visible = false; scene.add(g); return g;
+}
+const orbs = [makeOrb(), makeOrb(), makeOrb()];
+
+// 雨傘（第二章）
+function makeUmbrella(hex) {
+  const canopy = new THREE.Group();
+  const mat = addRim(new THREE.MeshPhysicalMaterial({ color: hex, roughness: .4, side: THREE.DoubleSide, sheen: .6, sheenColor: new THREE.Color(hex).lerp(new THREE.Color(0xffffff), .3) }), 0.4);
+  const cg = latheGeo([[0.66, -0.3], [0.58, -0.19], [0.36, -0.06], [0.0001, 0.02]], 8);
+  const cm = new THREE.Mesh(cg, mat); cm.castShadow = true; canopy.add(cm);
+  const tip = new THREE.Mesh(new THREE.CylinderGeometry(0.006, 0.01, 0.1, 6), new THREE.MeshStandardMaterial({ color: 0x222222, metalness: .6, roughness: .3 }));
+  tip.position.y = 0.06; canopy.add(tip);
+  const shaft = new THREE.Mesh(new THREE.CylinderGeometry(0.008, 0.008, 1, 8), new THREE.MeshStandardMaterial({ color: 0x2a2a2a, metalness: .7, roughness: .3 }));
+  canopy.visible = shaft.visible = false;
+  scene.add(canopy, shaft);
+  return { canopy, shaft, show(v) { canopy.visible = shaft.visible = v; } };
+}
+const umbrellas = [makeUmbrella(0x1f2c48), makeUmbrella(0xa8384a)];
+const tA = new THREE.Vector3(), tB = new THREE.Vector3(), tC = new THREE.Vector3(), tD = new THREE.Vector3();
+function placeUmbrella(u, P, inner) {
+  P.hands[inner].getWorldPosition(tA); tA.y -= 0.04;
+  P.head.getWorldPosition(tB); kid.head.getWorldPosition(tC);
+  const C = tD.copy(tB).lerp(tC, 0.52); C.y = Math.max(tB.y, tC.y) + (P === dad ? 0.42 : 0.36);
+  const tilt = new THREE.Vector3((tC.x - tB.x) * 0.55, 1, (tC.z - tB.z) * 0.55).normalize();
+  u.canopy.position.copy(C); u.canopy.quaternion.setFromUnitVectors(UPV, tilt);
+  const dir = C.clone().sub(tA), L = dir.length();
+  u.shaft.position.copy(tA).addScaledVector(dir, 0.5); u.shaft.quaternion.setFromUnitVectors(UPV, dir.normalize()); u.shaft.scale.set(1, L, 1);
+}
+function updateUmbrellas() {
+  if (!umbrellas[0].canopy.visible) return;
+  placeUmbrella(umbrellas[0], dad, 1); placeUmbrella(umbrellas[1], mom, 0);
+}
+
+// 雨
+const RAIN_N = LOW ? 2500 : 6000;
+const rainMesh = (() => {
+  const g = new THREE.BufferGeometry(), seeds = new Float32Array(RAIN_N * 2 * 4), r = rng(9);
+  for (let i = 0; i < RAIN_N; i++) { const a = r(), b = r(), c = r(); for (let v = 0; v < 2; v++) seeds.set([a, b, c, v], (i * 2 + v) * 4); }
+  g.setAttribute('position', new THREE.BufferAttribute(new Float32Array(RAIN_N * 2 * 3), 3));
+  g.setAttribute('aSeed', new THREE.BufferAttribute(seeds, 4));
+  const m = new THREE.ShaderMaterial({
+    transparent: true, depthWrite: false, uniforms: { uTime: U.uTime, uCam: U.uCam },
+    vertexShader: `attribute vec4 aSeed; uniform float uTime; uniform vec3 uCam; varying float vA;
+      void main(){
+        float T = 30.0; vec2 base = aSeed.xy * T; vec2 wp = base + T * floor((uCam.xz - base) / T + 0.5);
+        float fall = mod(uTime * 11.0 + aSeed.z * 16.0, 16.0);
+        vec3 p = vec3(wp.x + fall * 0.09, uCam.y + 8.0 - fall, wp.y);
+        p.y -= aSeed.w * 0.5; p.x -= aSeed.w * 0.045;
+        vA = 0.32 * (1.0 - smoothstep(9.0, 15.0, distance(p.xz, uCam.xz)));
+        gl_Position = projectionMatrix * viewMatrix * vec4(p, 1.0);
+      }`,
+    fragmentShader: `varying float vA; void main(){ gl_FragColor = vec4(vec3(1.6, 1.7, 1.85), vA); }`,
+  });
+  const l = new THREE.LineSegments(g, m); l.frustumCulled = false; l.visible = false; scene.add(l); hideInReflection.push(l);
+  return l;
+})();
+
+/* ---------- 時段與天氣 ---------- */
+const PRESETS = {
+  sunset: { elev: 1.9, azim: 175, turb: 10, ray: 3.2, mie: 0.005, g: 0.82, sun: 0xffb27c, sunI: 2.4, trans: [1, .5, .24, 2.4], hemiSky: 0xb59ac8, hemiGnd: 0x4a2a1c, hemiI: .9, fog: 0xc48a74, fogD: .0034, exp: .52, rain: 0, petals: true, waterSun: 0xffc48a, waterCol: 0x16202c },
+  morning: { elev: 12, azim: 160, turb: 3.5, ray: 1.4, mie: 0.004, g: 0.8, sun: 0xfff0dc, sunI: 3.0, trans: [1, .82, .6, 1.3], hemiSky: 0xbcd2f2, hemiGnd: 0x4a3c2c, hemiI: 1.0, fog: 0xbfcbd8, fogD: .0026, exp: .34, rain: 0, petals: true, waterSun: 0xfff0dc, waterCol: 0x1d3442 },
+  rain: { elev: 24, azim: 170, turb: 18, ray: 0.35, mie: 0.03, g: 0.7, sun: 0xc9d0da, sunI: 0.4, trans: [.5, .52, .55, .35], hemiSky: 0x9aa4b2, hemiGnd: 0x2c2e2c, hemiI: 1.6, fog: 0x6f7883, fogD: .011, exp: .2, rain: 1, petals: false, waterSun: 0x8a929c, waterCol: 0x1c2228 },
+};
+let envRT = null;
+function applyPreset(name) {
+  const p = PRESETS[name], su = sky.material.uniforms;
+  sunDir.setFromSphericalCoords(1, THREE.MathUtils.degToRad(90 - p.elev), THREE.MathUtils.degToRad(p.azim));
+  su.turbidity.value = p.turb; su.rayleigh.value = p.ray; su.mieCoefficient.value = p.mie; su.mieDirectionalG.value = p.g;
+  su.sunPosition.value.copy(sunDir);
+  scene.remove(sky); envScene.add(sky);
+  const rt2 = pmrem.fromScene(envScene); if (envRT) envRT.dispose(); envRT = rt2; scene.environment = envRT.texture;
+  envScene.remove(sky); scene.add(sky);
+  sun.color.setHex(p.sun); sun.intensity = p.sunI;
+  U.uSunCol.value.setRGB(p.trans[0], p.trans[1], p.trans[2]).multiplyScalar(p.trans[3]);
+  hemi.color.setHex(p.hemiSky); hemi.groundColor.setHex(p.hemiGnd); hemi.intensity = p.hemiI;
+  scene.fog.color.setHex(p.fog); scene.fog.density = p.fogD;
+  renderer.toneMappingExposure = Number(params.get('exp') || p.exp);
+  const wu = water.material.uniforms; wu.sunDirection.value.copy(sunDir); wu.sunColor.value.setHex(p.waterSun); wu.waterColor.value.setHex(p.waterCol);
+  rainMesh.visible = !!p.rain; petalMesh.visible = p.petals; Snd.setRain(p.rain);
+}
+
 /* ============================== 後製 ============================== */
 const rt = new THREE.WebGLRenderTarget(innerWidth * PR, innerHeight * PR, { type: THREE.HalfFloatType, samples: LOW ? 0 : 4 });
 const composer = new EffectComposer(renderer, rt);
@@ -977,7 +1197,9 @@ addEventListener('resize', () => {
 /* ============================== 聲音 ============================== */
 const Snd = {
   ctx: null, master: null, on: true,
+  rainLevel: 0,
   init() {
+    if (this.ctx) return;
     const AC = window.AudioContext || window.webkitAudioContext; if (!AC) return;
     const ctx = this.ctx = new AC();
     this.master = ctx.createGain(); this.master.gain.value = 0.9; this.master.connect(ctx.destination);
@@ -993,6 +1215,7 @@ const Snd = {
     const mkNoise = (type, f, g) => { const s = ctx.createBufferSource(); s.buffer = nb; s.loop = true; const fl = ctx.createBiquadFilter(); fl.type = type; fl.frequency.value = f; const gn = ctx.createGain(); gn.gain.value = g; s.connect(fl); fl.connect(gn); gn.connect(this.master); s.start(); return { fl, gn }; };
     this.wind = mkNoise('bandpass', 500, 0.05);
     this.wave = mkNoise('lowpass', 700, 0.0);
+    this.rain = mkNoise('highpass', 900, 0.0);
     this.next = ctx.currentTime + 0.2; this.step = 0;
     setInterval(() => this.schedule(), 120);
   },
@@ -1023,32 +1246,121 @@ const Snd = {
     this.wind.fl.frequency.setTargetAtTime(420 + Math.sin(t * 0.3) * 160, ct, 0.5);
     this.wind.gn.gain.setTargetAtTime(0.035 + 0.02 * Math.sin(t * 0.21), ct, 0.5);
     this.wave.gn.gain.setTargetAtTime(nearSea * (0.06 + 0.05 * Math.max(0, Math.sin(t * 0.85))), ct, 0.4);
+    this.rain.gn.gain.setTargetAtTime(this.rainLevel * 0.9, ct, 0.8);
+  },
+  setRain(v) { this.rainLevel = v; },
+  chime() {
+    if (!this.ctx) return; const t = this.ctx.currentTime, m = (n) => 440 * Math.pow(2, (n - 69) / 12);
+    [79, 84, 88].forEach((n, i) => this.note(m(n), t + i * 0.11, 2.6, 0.16));
   },
   fadeMusic(v, s) { if (this.ctx) this.music.gain.setTargetAtTime(v, this.ctx.currentTime, s); },
   toggle() { this.on = !this.on; if (this.master) this.master.gain.setTargetAtTime(this.on ? 0.9 : 0, this.ctx.currentTime, 0.1); $('mute').textContent = '聲音：' + (this.on ? '開' : '關'); },
 };
 $('mute').onclick = () => Snd.toggle();
 
-/* ============================== 字幕 ============================== */
-const subEl = $('sub'), blackEl = $('black'), blackSub = $('blackSub');
-async function blackLine(text, hold) {
-  blackSub.textContent = text; await sleep(60); blackSub.classList.add('on');
-  await sleep(hold); blackSub.classList.remove('on'); await sleep(1200);
-}
-async function subLines(lines) {
-  document.body.classList.add('cine'); await sleep(1100);
-  for (const [text, hold] of lines) {
-    subEl.textContent = text; subEl.classList.add('on'); await sleep(hold);
-    subEl.classList.remove('on'); await sleep(1150);
+/* ============================== 計時器（暫停時會停） ============================== */
+let runId = 0, gameTime = 0, paused = false;
+const timers = [];
+function wait(ms) { const run = runId; return new Promise(res => timers.push({ at: gameTime + ms / 1000, res, run })); }
+function tickTimers() {
+  for (let i = timers.length - 1; i >= 0; i--) {
+    const tm = timers[i];
+    if (tm.run !== runId) { timers.splice(i, 1); continue; }
+    if (gameTime >= tm.at) { timers.splice(i, 1); tm.res(); }
   }
-  document.body.classList.remove('cine'); await sleep(1000);
+}
+
+/* ============================== 字幕與對話（黑色背景） ============================== */
+const subEl = $('sub'), blackEl = $('black'), blackSub = $('blackSub'), dlgNext = $('dlgNext');
+let barLock = Promise.resolve();
+function withBar(fn) { const run = runId; const p = barLock.then(() => (run === runId ? fn() : new Promise(() => {}))); barLock = p.catch(() => {}); return p; }
+const NAME_CLS = { '爸爸': 'dad', '媽媽': 'mom', '我': 'me' };
+function setSub(text, speaker, done = true) {
+  subEl.textContent = '';
+  if (speaker) { const s = document.createElement('span'); s.className = 'nm ' + (NAME_CLS[speaker] || ''); s.textContent = speaker; subEl.appendChild(s); }
+  subEl.appendChild(document.createTextNode(speaker ? '「' + text + (done ? '」' : '') : text));
+}
+async function blackLine(text, hold) {
+  blackSub.textContent = text; await wait(60); blackSub.classList.add('on');
+  await wait(hold); blackSub.classList.remove('on'); await wait(1200);
+}
+function subLines(lines) {
+  return withBar(async () => {
+    document.body.classList.add('cine'); await wait(1100);
+    for (const [text, hold, speaker] of lines) {
+      setSub(text, speaker); subEl.classList.add('on'); await wait(hold);
+      subEl.classList.remove('on'); await wait(1150);
+    }
+    document.body.classList.remove('cine'); await wait(1000);
+  });
+}
+let typing = false, skipType = false, advanceRes = null;
+function advance() {
+  if (typing) { skipType = true; return true; }
+  if (advanceRes) { const r = advanceRes; advanceRes = null; r(); return true; }
+  return false;
+}
+function say(lines) {
+  return withBar(async () => {
+    const prev = canMove; canMove = false;
+    document.body.classList.add('cine', 'talking'); await wait(900);
+    for (const [speaker, text] of lines) {
+      subEl.classList.add('on'); typing = true; skipType = false;
+      for (let i = 1; i <= text.length && !skipType; i++) { setSub(text.slice(0, i), speaker, false); await wait(45); }
+      setSub(text, speaker); typing = false; dlgNext.classList.add('on');
+      await new Promise(r => advanceRes = r);
+      dlgNext.classList.remove('on');
+    }
+    subEl.classList.remove('on'); document.body.classList.remove('talking', 'cine'); await wait(700);
+    canMove = prev;
+  });
+}
+// 回憶碎片卡片
+let memoRes = null;
+function showMemo(title, text) {
+  return new Promise(r => {
+    $('memoT').textContent = title; $('memoX').textContent = text; $('memo').classList.add('on');
+    const prev = canMove; canMove = false;
+    memoRes = () => { $('memo').classList.remove('on'); canMove = prev; r(); };
+  });
+}
+function closeMemo() { if (memoRes) { const r = memoRes; memoRes = null; r(); return true; } return false; }
+function setObjective(o) {
+  $('objMain').textContent = o ? o[0] : ''; $('objSub').textContent = o ? (o[1] || '') : '';
+  $('obj').classList.toggle('on', !!o);
+}
+function refreshObjective() { setObjective(chap && chap.objective ? chap.objective() : null); }
+let promptTarget = null;
+function setPrompt(label, target) {
+  promptTarget = target || null;
+  const el = $('prompt');
+  if (label) { el.textContent = (isTouch ? '點這裡　' : '按 E　') + label; el.classList.add('on'); } else el.classList.remove('on');
+}
+function showHint() {
+  $('hintMain').textContent = chap ? chap.hint : '';
+  $('hint').classList.add('on'); wait(9000).then(() => $('hint').classList.remove('on'));
 }
 
 /* ============================== 操作 ============================== */
 const keys = {};
-addEventListener('keydown', (e) => { keys[e.code] = true; if (e.code.startsWith('Arrow') || e.code === 'Space') e.preventDefault(); });
+addEventListener('keydown', (e) => {
+  keys[e.code] = true;
+  if (e.code.startsWith('Arrow') || e.code === 'Space') e.preventDefault();
+  if (e.repeat) return;
+  if (e.code === 'Escape' || e.code === 'KeyP') { if (paused) togglePause(false); else if (canPause()) togglePause(true); return; }
+  if (paused) return;
+  if (e.code === 'Space' || e.code === 'Enter' || e.code === 'KeyE') {
+    if (closeMemo() || advance()) return;
+    if (e.code !== 'Space') interact();
+  }
+});
 addEventListener('keyup', (e) => { keys[e.code] = false; });
 addEventListener('blur', () => { for (const k in keys) keys[k] = false; });
+addEventListener('pointerdown', (e) => {
+  if (paused || (e.target.closest && e.target.closest('button'))) return;
+  if (memoRes) { closeMemo(); return; }
+  if (typing || advanceRes) advance();
+}, true);
 const joy = { id: null, x: 0, y: 0, cx: 0, cy: 0 };
 let look = { id: null, lx: 0 }, camYaw = 0, lastLook = -10;
 const cvs = renderer.domElement;
@@ -1064,20 +1376,27 @@ function moveJoy(e) {
 }
 cvs.addEventListener('pointermove', (e) => {
   if (e.pointerId === joy.id) moveJoy(e);
-  else if (e.pointerId === look.id) { camYaw -= (e.clientX - look.lx) * (isTouch ? 0.008 : 0.005); look.lx = e.clientX; lastLook = clock.elapsedTime; }
+  else if (e.pointerId === look.id) { camYaw -= (e.clientX - look.lx) * (isTouch ? 0.008 : 0.005); look.lx = e.clientX; lastLook = gameTime; }
 });
 const endPtr = (e) => {
   if (e.pointerId === joy.id) { joy.id = null; joy.x = joy.y = 0; $('joy').firstElementChild.style.transform = ''; }
   if (e.pointerId === look.id) look.id = null;
 };
 cvs.addEventListener('pointerup', endPtr); cvs.addEventListener('pointercancel', endPtr);
+$('prompt').addEventListener('click', () => interact());
 
 /* ============================== 遊戲狀態 ============================== */
-let state = 'title';   // title → intro → play → cut → end
+let state = 'title';   // title / loading / intro / play / scene / cut / end / done
 let introT = 0, canMove = false;
+let chap = null, ch = {};
 const cut = { t: 0, arrived: false, hugT: 0, ending: false, endT: 0, subsStarted: false, faded: false };
 const camLook = new THREE.Vector3(0, 1, -40);
+const introFrom = new THREE.Vector3(0, 0, 6);
+const sceneCam = { pos: new THREE.Vector3(), look: new THREE.Vector3(), rate: 2 };
+function setSceneCam(px, py, pz, lx, ly, lz, rate = 2) { sceneCam.pos.set(px, py, pz); sceneCam.look.set(lx, ly, lz); sceneCam.rate = rate; }
 const clock = new THREE.Clock();
+
+function placePlayer(x, z, yaw) { player.x = x; player.z = z; player.yaw = player.tyaw = yaw; player.speed = 0; camYaw = yaw - Math.PI; }
 
 function updatePlayer(dt) {
   let ix = (keys.KeyD || keys.ArrowRight ? 1 : 0) - (keys.KeyA || keys.ArrowLeft ? 1 : 0) + joy.x;
@@ -1088,33 +1407,44 @@ function updatePlayer(dt) {
     const fx = -Math.sin(camYaw), fz = -Math.cos(camYaw), rx = Math.cos(camYaw), rz = -Math.sin(camYaw);
     const dx = fx * iy + rx * ix, dz = fz * iy + rz * ix;
     player.tyaw = Math.atan2(dx, dz);
-    const run = keys.ShiftLeft || keys.ShiftRight || Math.hypot(joy.x, joy.y) > 0.9;
+    const run = !(chap && chap.noRun) && (keys.ShiftLeft || keys.ShiftRight || Math.hypot(joy.x, joy.y) > 0.9);
     player.speed = damp(player.speed, (run ? 6.4 : 3.7) * mag, 5, dt);
   } else player.speed = damp(player.speed, 0, 7, dt);
   player.yaw = lerpAngle(player.yaw, player.tyaw, 1 - Math.exp(-9 * dt));
   player.x += Math.sin(player.yaw) * player.speed * dt;
   player.z += Math.cos(player.yaw) * player.speed * dt;
   player.x = clamp(player.x, -58, 58); player.z = clamp(player.z, -150, 28);
-  // 自動讓鏡頭慢慢跟到角色背後
-  if (player.speed > 0.5 && clock.elapsedTime - lastLook > 1.5) camYaw = lerpAngle(camYaw, player.yaw - Math.PI, 1 - Math.exp(-0.9 * dt));
-  if (!walkDone) player.z = Math.max(player.z, -144);
-  if (state === 'play' && walkDone && (Math.hypot(player.x - HUG.x, player.z - HUG.z) < 14 || player.z < -141)) startCut();
+  if (player.speed > 0.5 && gameTime - lastLook > 1.5) camYaw = lerpAngle(camYaw, player.yaw - Math.PI, 1 - Math.exp(-0.9 * dt));
+  if (chap && chap.n === 3 && !walkDone) player.z = Math.max(player.z, -144);
 }
 function kidPose(dt) {
   const amt = Math.min(1, player.speed / 3.2), run = clamp((player.speed - 3.7) / 2.7, 0, 1);
   player.phase += dt * Math.PI * 2 * player.speed / (1.0 + 0.13 * player.speed);
-  const q = basePose(clock.elapsedTime, 1);
+  const q = basePose(gameTime, 1);
   if (player.speed > 0.05) walkPose(q, player.phase, amt, run);
   return q;
 }
+// 讓爸爸或媽媽走向某個位置（有走路動作）
+function followTo(P, tx, tz, dt, key, idleYaw) {
+  const p = P.root.position, dx = tx - p.x, dz = tz - p.z, d = Math.hypot(dx, dz);
+  const want = d > 0.06 ? Math.min(6.5, d * 3.0) : 0;
+  ch[key + 'Spd'] = damp(ch[key + 'Spd'] || 0, want, 6, dt);
+  const sp = ch[key + 'Spd'];
+  if (d > 0.01) { const st = Math.min(d, sp * dt); p.x += dx / d * st; p.z += dz / d * st; }
+  p.y = H(p.x, p.z);
+  const yawT = sp > 0.35 ? Math.atan2(dx, dz) : idleYaw;
+  P.root.rotation.y = lerpAngle(P.root.rotation.y, yawT, 1 - Math.exp(-6 * dt));
+  ch[key + 'Ph'] = (ch[key + 'Ph'] || 0) + dt * Math.PI * 2 * sp / (1.3 + 0.1 * sp);
+  return sp;
+}
 
+/* ---------- 第三章用：擁抱 ---------- */
 function startCut() {
   state = 'cut'; cut.t = 0; canMove = false;
-  $('hint').classList.remove('on'); document.body.classList.remove('playing');
+  $('hint').classList.remove('on'); document.body.classList.remove('playing'); setObjective(null); setPrompt(null);
 }
 function updateCut(dt) {
   cut.t += dt;
-  // 小孩衝上去
   if (!cut.arrived) {
     const dx = HUG.x - player.x, dz = HUG.z - player.z, d = Math.hypot(dx, dz);
     if (cut.t > 0.35) {
@@ -1135,12 +1465,11 @@ function updateCut(dt) {
   }
   if (cut.ending) {
     cut.endT += dt;
-    if (cut.endT > 4.5 && !cut.faded) { cut.faded = true; blackSub.textContent = ''; blackEl.classList.remove('off'); setTimeout(() => { state = 'end'; $('endCard').classList.add('show'); }, 3000); }
+    if (cut.endT > 4.5 && !cut.faded) { cut.faded = true; blackSub.textContent = ''; blackEl.classList.remove('off'); wait(3000).then(finishGame); }
   }
 }
-
 function parentsUpdate(dt, t) {
-  const turning = state === 'cut';
+  const turning = state === 'cut' || state === 'end';
   const k = turning ? easeIO((cut.t - 0.2) / 1.7) : 0;
   const hugging = turning && cut.arrived;
   for (const [P, idle, hugPos, yawT, inner, ph] of [[dad, DAD_IDLE, DAD_HUG, DAD_YAW, 1, 0], [mom, MOM_IDLE, MOM_HUG, MOM_YAW, 0, 2]]) {
@@ -1149,31 +1478,41 @@ function parentsUpdate(dt, t) {
     P.root.rotation.y = lerp(Math.PI, yawT, k);
     const q = basePose(t, ph);
     if (!turning || k < 0.25) {
-      // 牽著手，一起看夕陽
       q['shZ' + inner] = side(inner) * 0.47; q['shX' + inner] = -0.12; q['elX' + inner] = -0.08;
       if (P === mom) { q.nkZ = 0.12; q.nkX = 0.08; }
-      if (P.c.hairFall) { P.c.hairFall.rotation.x = Math.sin(t * 1.7) * 0.06; P.c.hairFall.rotation.z = Math.sin(t * 1.1) * 0.05; }
       blendPose(P, q, dt, 5);
     } else if (!hugging) {
-      // 張開雙手
       for (const i of [0, 1]) { q['shX' + i] = -0.72; q['shZ' + i] = side(i) * 0.78; q['elX' + i] = -0.38; }
       q.spX = 0.14; q.nkX = 0.12; q.thX0 = q.thX1 = -0.32; q.knX0 = q.knX1 = 0.58;
       blendPose(P, q, dt, 3.2);
     } else {
-      // 擁抱
       for (const i of [0, 1]) { q['shX' + i] = -1.12; q['shZ' + i] = side(i) * 0.32; q['elZ' + i] = -side(i) * 1.25; q['elX' + i] = -0.25; }
       const mm = P === mom; q.spX = mm ? 0.5 : 0.42; q.spZ = Math.sin(t * 0.9 + ph) * 0.03; q.nkX = 0.28; q.thX0 = q.thX1 = mm ? -0.3 : -0.72; q.knX0 = q.knX1 = mm ? 0.55 : 1.22;
       blendPose(P, q, dt, 3.5);
     }
-    if (P.c.hairFall) { P.c.hairFall.rotation.x = Math.sin(t * 1.7) * 0.06 + 0.02; P.c.hairFall.rotation.z = Math.sin(t * 1.1) * 0.05; }
     if (P.c.skirtMesh) P.c.skirtMesh.rotation.z = Math.sin(t * 1.3) * 0.025;
   }
 }
 
+const tv1 = new THREE.Vector3();
 function kidUpdate(dt, t) {
+  if (chap && chap.n === 1 && ch.onShoulders) {
+    // 坐在爸爸肩膀上
+    const q = basePose(t, 1);
+    q.thX0 = q.thX1 = -1.45; q.knX0 = q.knX1 = 1.5;
+    for (const i of [0, 1]) { q['shX' + i] = -0.75; q['shZ' + i] = side(i) * 0.3; q['elX' + i] = -0.9; }
+    q.nkX = -0.12; q.spX = -0.04;
+    blendPose(kid, q, dt, 12);
+    dad.neck.getWorldPosition(tv1);
+    const yaw = dad.root.rotation.y;
+    kid.root.rotation.y = yaw; player.yaw = yaw;
+    kid.root.position.set(tv1.x - Math.sin(yaw) * 0.05, tv1.y + 0.07 - kid.hips.position.y * kid.c.scale, tv1.z - Math.cos(yaw) * 0.05);
+    player.x = kid.root.position.x; player.z = kid.root.position.z;
+    return;
+  }
   kid.root.position.set(player.x, H(player.x, player.z), player.z);
   kid.root.rotation.y = player.yaw;
-  if (state === 'cut' && cut.arrived) {
+  if (chap && chap.n === 3 && (state === 'cut' || state === 'end') && cut.arrived) {
     const q = basePose(t, 1);
     for (const i of [0, 1]) { q['shX' + i] = -1.5; q['shZ' + i] = side(i) * 1.0; q['elX' + i] = -0.5; q['elZ' + i] = -side(i) * 0.6; }
     q.nkX = -0.18; q.spX = 0.05; q.spZ = Math.sin(t * 0.9) * 0.03;
@@ -1181,24 +1520,314 @@ function kidUpdate(dt, t) {
   } else blendPose(kid, kidPose(dt), dt, 18);
 }
 
+/* ============================== 回憶碎片 ============================== */
+let frags = [];
+function setupFrags(c) {
+  orbs.forEach(o => o.visible = false);
+  frags = c.frags.map((f, i) => { const o = orbs[i]; o.visible = true; o.scale.setScalar(1); o.position.set(f.x, H(f.x, f.z) + 1, f.z); return { ...f, orb: o, got: false, id: c.n + '-' + i }; });
+}
+const fragsGot = () => frags.filter(f => f.got).length;
+function updateFrags(dt, t) {
+  let best = null, bd = 1.9;
+  for (const f of frags) {
+    if (f.got) { if (f.orb.visible) { f.orb.scale.multiplyScalar(Math.exp(-5 * dt)); f.orb.position.y += dt * 1.5; if (f.orb.scale.x < 0.03) f.orb.visible = false; } continue; }
+    f.orb.position.y = H(f.x, f.z) + 1.0 + Math.sin(t * 2 + f.x) * 0.12;
+    const d = Math.hypot(player.x - f.x, player.z - f.z);
+    if (d < bd && state === 'play' && canMove) { bd = d; best = f; }
+  }
+  if (best !== promptTarget) setPrompt(best ? '拾起回憶' : null, best);
+}
+async function interact() {
+  const f = promptTarget;
+  if (!f || f.got || !canMove || paused) return;
+  f.got = true; save.frags[f.id] = true; persist();
+  setPrompt(null); refreshObjective(); Snd.chime();
+  await showMemo(`回憶碎片　${fragsGot()} / ${frags.length}`, f.text);
+}
+
+/* ============================== 故事模式：存檔 ============================== */
+const SAVE_KEY = 'bbmm-story-v1';
+let save = { done: {}, frags: {} };
+try { const s = JSON.parse(localStorage.getItem(SAVE_KEY) || 'null'); if (s && s.done && s.frags) save = s; } catch (e) {}
+function persist() { try { localStorage.setItem(SAVE_KEY, JSON.stringify(save)); } catch (e) {} }
+const isUnlocked = (n) => n === 1 || !!save.done[n - 1] || params.get('unlock') === 'all';
+
+/* ============================== 章節 ============================== */
+const CHAPTERS = [
+  { n: 1, no: '第一章', name: '爸爸的肩膀', desc: '清晨的玫瑰花田，爸爸在前面等你。', preset: 'morning', hint: '撿起花田裡發光的回憶，再去找爸爸',
+    frags: [
+      { x: -9, z: -12, text: '爸爸教我騎腳踏車。他在後面扶著說：「不要怕，爸爸在。」等我回頭，才發現他早就放手了。' },
+      { x: 11, z: -27, text: '爸爸下班回家再累，還是會笑著把我抱起來，在客廳轉好幾圈。' },
+      { x: -5, z: -43, text: '媽媽蹲下來幫我綁鞋帶，說：「跑慢一點，媽媽會追不上你。」' },
+    ] },
+  { n: 2, no: '第二章', name: '雨天的傘', desc: '下雨了，和爸爸媽媽一起走到大樹下躲雨。', preset: 'rain', noRun: true, hint: '跟爸爸媽媽一起走到前面的大樹下',
+    frags: [
+      { x: -6, z: -30, text: '媽媽的包包裡永遠多帶一件外套，那一件從來都是給我的。' },
+      { x: 9, z: -55, text: '放學突然下大雨，校門口那把熟悉的傘，是爸爸請假來接我。' },
+    ] },
+  { n: 3, no: '第三章', name: '夕陽玫瑰海', desc: '玫瑰海的盡頭，爸爸媽媽在等你。', preset: 'sunset', hint: '往夕陽的方向走，去找爸爸媽媽',
+    frags: [
+      { x: -7, z: -58, text: '生日那天，媽媽做了一桌我最愛吃的菜，自己卻只吃了幾口。' },
+      { x: 8, z: -104, text: '爸爸手上的繭，是我從小到大每一個學期的學費。' },
+    ] },
+];
+
+/* ---------- 第一章：爸爸的肩膀 ---------- */
+Object.assign(CHAPTERS[0], {
+  setup() {
+    placePlayer(0, 6, Math.PI);
+    ch = { phase: 'collect', crouch: false, onShoulders: false, walk: 0, dadPh: 0 };
+    placeP(dad, 3.5, -60, 0); placeP(mom, 5.4, -60.8, 0);
+  },
+  objective() {
+    if (ch.phase === 'collect') return ['收集花田裡的回憶碎片', `${fragsGot()} / ${frags.length}`];
+    if (ch.phase === 'find') return ['去找爸爸', ''];
+    return null;
+  },
+  async run() {
+    await reveal();
+    await say([['媽媽', '早安！今天天氣真好，我們去花田走走吧。'], ['爸爸', '爸爸先到前面等你。路上有發光的回憶，記得都撿起來喔！']]);
+    showHint();
+  },
+  update(dt) {
+    if (ch.phase === 'collect' && state === 'play' && fragsGot() === frags.length && !memoRes) {
+      ch.phase = 'find'; refreshObjective(); subLines([['快過來，爸爸在這裡！', 3600, '爸爸']]);
+    }
+    if (ch.phase === 'find' && state === 'play' && Math.hypot(player.x - dad.root.position.x, player.z - dad.root.position.z) < 2.3) shoulderScene();
+    if (ch.onShoulders) {
+      const p = dad.root.position, sp = 0.85 * ch.walk;
+      p.z -= sp * dt; p.y = H(p.x, p.z); ch.dadPh += dt * Math.PI * 2 * sp / 1.3;
+      setSceneCam(p.x + 1.8, p.y + 1.85, p.z + 3.8, p.x - 0.2, p.y + 1.75, p.z - 6, 1.6);
+    }
+  },
+  parents(dt, t) {
+    {
+      const P = dad, q = basePose(t, 0), p = P.root.position;
+      if (!ch.onShoulders) {
+        p.y = H(p.x, p.z);
+        P.root.rotation.y = lerpAngle(P.root.rotation.y, Math.atan2(player.x - p.x, player.z - p.z), 1 - Math.exp(-3 * dt));
+        const near = Math.hypot(player.x - p.x, player.z - p.z);
+        if (ch.crouch) {
+          q.thX0 = q.thX1 = -0.95; q.knX0 = q.knX1 = 1.7; q.spX = 0.45;
+          for (const i of [0, 1]) { q['shX' + i] = -0.95; q['shZ' + i] = side(i) * 0.35; q['elX' + i] = -0.5; }
+        } else if (ch.phase === 'find' && near > 2.6 && near < 45) {
+          q.shZ1 = -2.55 + Math.sin(t * 7) * 0.22; q.shX1 = -0.15; q.elX1 = -0.25;     // 揮手
+        }
+        blendPose(P, q, dt, 5);
+      } else {
+        P.root.rotation.y = lerpAngle(P.root.rotation.y, Math.PI, 1 - Math.exp(-4 * dt));
+        if (ch.walk > 0) walkPose(q, ch.dadPh, 0.5, 0);
+        for (const i of [0, 1]) { q['shX' + i] = -0.55; q['shZ' + i] = side(i) * 0.32; q['elX' + i] = -1.75; q['elZ' + i] = 0; }
+        blendPose(P, q, dt, 8);
+      }
+    }
+    {
+      const P = mom, q = basePose(t, 2), p = P.root.position;
+      if (ch.onShoulders) {
+        const sp = followTo(P, dad.root.position.x + 1.0, dad.root.position.z + 0.35, dt, 'mom', Math.PI);
+        if (sp > 0.1) walkPose(q, ch.momPh, Math.min(1, sp / 1.4), 0);
+        q.nkY = 0.35;
+      } else {
+        p.y = H(p.x, p.z);
+        P.root.rotation.y = lerpAngle(P.root.rotation.y, Math.atan2(player.x - p.x, player.z - p.z), 1 - Math.exp(-3 * dt));
+        if (ch.phase === 'scene') { q.shX0 = -0.5; q.elX0 = -1.5; }
+      }
+      blendPose(P, q, dt, 8);
+    }
+  },
+});
+async function shoulderScene() {
+  state = 'scene'; canMove = false; ch.phase = 'scene'; refreshObjective(); setPrompt(null); $('hint').classList.remove('on'); player.speed = 0;
+  const dp = dad.root.position;
+  player.yaw = player.tyaw = Math.atan2(dp.x - player.x, dp.z - player.z);
+  const mx = (dp.x + player.x) / 2, mz = (dp.z + player.z) / 2, my = H(mx, mz);
+  const f = new THREE.Vector2(dp.x - player.x, dp.z - player.z).normalize();
+  setSceneCam(mx + f.y * 3.4, my + 1.35, mz - f.x * 3.4, mx, my + 1.05, mz, 2);
+  await say([['爸爸', '來，爸爸帶你去看更遠的地方！']]);
+  ch.crouch = true; await wait(1100);
+  await quickBlack(() => { ch.crouch = false; ch.onShoulders = true; dad.root.rotation.y = Math.PI; });
+  ch.walk = 1;
+  await say([['我', '哇！好高喔！我看到海了！'], ['爸爸', '抓緊喔，爸爸不會讓你掉下來的。'], ['媽媽', '慢慢走，小心一點喔。']]);
+  await subLines([[WALK_LINES[0], 5400]]);
+  await wait(400);
+  completeChapter();
+}
+
+/* ---------- 第二章：雨天的傘 ---------- */
+Object.assign(CHAPTERS[1], {
+  setup() {
+    placePlayer(0, 2, Math.PI);
+    ch = { phase: 'walk', said: 0 };
+    placeP(dad, -0.72, 2.1, Math.PI); placeP(mom, 0.72, 2.1, Math.PI);
+    umbrellas.forEach(u => u.show(true));
+  },
+  objective() { return ch.phase === 'walk' ? ['和爸爸媽媽一起走到大樹下躲雨', `回憶碎片　${fragsGot()} / ${frags.length}`] : null; },
+  async run() { await reveal(); showHint(); },
+  update() {
+    const BARKS = [
+      [-4, [['靠過來一點，別淋到雨了。', 3600, '媽媽'], ['爸爸，你的肩膀都濕了。', 3400, '我']]],
+      [-40, [['沒關係，爸爸不冷。你走中間就好。', 3800, '爸爸'], ['前面那棵大樹下可以躲雨，我們走快一點。', 3800, '媽媽']]],
+    ];
+    while (ch.said < BARKS.length && player.z < BARKS[ch.said][0] && state === 'play') subLines(BARKS[ch.said++][1]);
+    if (ch.phase === 'walk' && state === 'play' && Math.hypot(player.x - TREE.x, player.z - TREE.y) < 4.2) treeScene();
+  },
+  parents(dt, t) {
+    const fx = Math.sin(player.yaw), fz = Math.cos(player.yaw), rx = -fz, rz = fx;
+    for (const [P, sgn, key, inner, ph] of [[dad, -1, 'dad', 1, 0], [mom, 1, 'mom', 0, 2]]) {
+      const tx = player.x + rx * 0.72 * sgn - fx * 0.1, tz = player.z + rz * 0.72 * sgn - fz * 0.1;
+      const idle = ch.phase === 'walk' ? player.yaw : Math.atan2(player.x - P.root.position.x, player.z - P.root.position.z);
+      const sp = followTo(P, tx, tz, dt, key, idle);
+      const q = basePose(t, ph);
+      if (sp > 0.1) walkPose(q, ch[key + 'Ph'], Math.min(1, sp / 1.4), 0);
+      q['shX' + inner] = -1.05; q['shZ' + inner] = side(inner) * 0.06; q['elX' + inner] = -1.05; q['elZ' + inner] = 0;
+      q.nkY = sgn * 0.22;
+      blendPose(P, q, dt, 10);
+    }
+  },
+});
+async function treeScene() {
+  state = 'scene'; canMove = false; ch.phase = 'tree'; refreshObjective(); setPrompt(null); $('hint').classList.remove('on'); player.speed = 0;
+  const fx = Math.sin(player.yaw), fz = Math.cos(player.yaw), gy = H(player.x, player.z);
+  setSceneCam(player.x + fx * 3.3 + fz * 0.6, gy + 1.35, player.z + fz * 3.3 - fx * 0.6, player.x, gy + 1.15, player.z, 1.8);
+  await say([['媽媽', '快到樹下來。回家媽媽煮薑湯給你喝。'], ['我', '爸爸媽媽也要喝喔！'], ['爸爸', '好，我們一家人一起喝。']]);
+  await subLines([[WALK_LINES[2], 5200], ['長大後才發現，他們總是站在被雨淋到的那一邊。', 5600]]);
+  await wait(400);
+  completeChapter();
+}
+
+/* ---------- 第三章：夕陽玫瑰海 ---------- */
+Object.assign(CHAPTERS[2], {
+  setup() {
+    placePlayer(0, 6, Math.PI);
+    placeP(dad, DAD_IDLE.x, DAD_IDLE.y, Math.PI); placeP(mom, MOM_IDLE.x, MOM_IDLE.y, Math.PI);
+    walkDone = false;
+  },
+  objective() { return ['往夕陽的方向走，去找爸爸媽媽', `回憶碎片　${fragsGot()} / ${frags.length}`]; },
+  async run() {
+    setObjective(null);
+    await blackLine(L1, 5200);
+    refreshObjective();
+    await reveal(); showHint();
+    await wait(600);
+    await subLines([[L2, 5200], [L3, 5800], ...WALK_LINES.map(t => [t, 4300])]);
+    walkDone = true;
+  },
+  update() {
+    if (state === 'play' && walkDone && (Math.hypot(player.x - HUG.x, player.z - HUG.z) < 14 || player.z < -141)) startCut();
+  },
+  parents: (dt, t) => parentsUpdate(dt, t),
+});
+
+/* ============================== 章節流程 ============================== */
+const CARDS = ['titleCard', 'chapCard', 'doneCard', 'pauseCard', 'endCard'];
+function showCard(id) { for (const c of CARDS) $(c).classList.toggle('hide', c !== id); }
+function hideCards() { for (const c of CARDS) $(c).classList.add('hide'); }
+function blackNow(on) {
+  blackEl.style.transition = 'none'; blackEl.classList.toggle('off', !on);
+  void blackEl.offsetWidth; blackEl.style.transition = '';
+}
+async function quickBlack(fn) {
+  blackEl.classList.add('fast'); blackEl.classList.remove('off');
+  await wait(650); fn(); await wait(450);
+  blackEl.classList.add('off'); await wait(700); blackEl.classList.remove('fast');
+}
+async function reveal() {
+  introFrom.set(player.x, H(player.x, player.z), player.z);
+  state = 'intro'; introT = 0; blackEl.classList.add('off');
+  await wait(1600);
+  state = 'play'; canMove = true; document.body.classList.add('playing');
+}
+function resetWorld() {
+  runId++; timers.length = 0; barLock = Promise.resolve();
+  advanceRes = null; typing = false; memoRes = null;
+  $('memo').classList.remove('on'); subEl.classList.remove('on'); dlgNext.classList.remove('on'); blackSub.classList.remove('on');
+  document.body.classList.remove('cine', 'talking', 'playing');
+  $('hint').classList.remove('on'); setObjective(null); setPrompt(null); $('chapTitle').classList.remove('on');
+  paused = false; canMove = false; walkDone = false;
+  Object.assign(cut, { t: 0, arrived: false, hugT: 0, ending: false, endT: 0, subsStarted: false, faded: false });
+  ch = {}; frags.forEach(f => f.orb.visible = false); frags = [];
+  umbrellas.forEach(u => u.show(false));
+  for (const P of [dad, mom, kid]) { P.cur = basePose(); applyPose(P); }
+  Snd.fadeMusic(0.2, 1);
+}
+async function startChapter(n) {
+  resetWorld(); const run = runId;
+  chap = CHAPTERS[n - 1]; state = 'loading';
+  blackNow(true); hideCards();
+  applyPreset(chap.preset); chap.setup(); setupFrags(chap);
+  $('ctNo').textContent = chap.no; $('ctName').textContent = chap.name;
+  await wait(500); $('chapTitle').classList.add('on');
+  await wait(3600); $('chapTitle').classList.remove('on');
+  await wait(1400);
+  if (run !== runId) return;
+  refreshObjective();
+  chap.run();
+}
+async function completeChapter() {
+  const c = chap; save.done[c.n] = true; persist();
+  state = 'done'; canMove = false; document.body.classList.remove('playing'); setObjective(null); setPrompt(null);
+  blackEl.classList.remove('off'); await wait(2600);
+  $('dnNo').textContent = c.no + '　完成'; $('dnName').textContent = c.name;
+  $('dnStat').textContent = `回憶碎片　${fragsGot()} / ${frags.length}`;
+  const nx = CHAPTERS[c.n];
+  $('nextBtn').style.display = nx ? '' : 'none'; if (nx) $('nextBtn').textContent = '下一章：' + nx.name;
+  showCard('doneCard');
+}
+function finishGame() {
+  save.done[3] = true; persist();
+  state = 'end'; showCard('endCard');
+}
+function goTitle() {
+  resetWorld(); chap = null; state = 'title';
+  applyPreset('sunset'); placePlayer(0, 6, Math.PI);
+  placeP(dad, DAD_IDLE.x, DAD_IDLE.y, Math.PI); placeP(mom, MOM_IDLE.x, MOM_IDLE.y, Math.PI);
+  blackNow(true); showCard('titleCard');
+}
+function openChapters() {
+  const list = $('chapList'); list.textContent = '';
+  for (const c of CHAPTERS) {
+    const un = isUnlocked(c.n), got = c.frags.filter((_, i) => save.frags[c.n + '-' + i]).length;
+    const b = document.createElement('button'); b.className = 'chap'; b.disabled = !un;
+    const mk2 = (cls, txt, tag = 'span') => { const e = document.createElement(tag); e.className = cls; e.textContent = txt; return e; };
+    const body = mk2('cb', ''); body.append(mk2('ct', un ? c.name : '尚未解鎖', 'b'), mk2('cd', un ? c.desc : '完成上一章後解鎖', 'em'));
+    const st = mk2('cs', ''); st.append(mk2('', save.done[c.n] ? '已完成' : (un ? '未完成' : '')), document.createElement('br'), mk2('', un ? `回憶 ${got} / ${c.frags.length}` : ''));
+    b.append(mk2('cn', c.no), body, st);
+    b.onclick = () => startChapter(c.n);
+    list.appendChild(b);
+  }
+  showCard('chapCard');
+}
+function canPause() { return ['intro', 'play', 'scene', 'cut'].includes(state); }
+function togglePause(on) {
+  paused = on;
+  if (on) { $('pauseCard').classList.remove('hide'); } else $('pauseCard').classList.add('hide');
+}
+
+/* ============================== 鏡頭 ============================== */
 const tmpV = new THREE.Vector3(), tmpL = new THREE.Vector3();
 function updateCamera(dt) {
   const py = H(player.x, player.z);
   const playPos = tmpV.set(player.x + Math.sin(camYaw) * 4.3, py + 1.9, player.z + Math.cos(camYaw) * 4.3);
   const playLook = tmpL.set(player.x - Math.sin(camYaw) * 3, py + 1.0, player.z - Math.cos(camYaw) * 3);
   if (state === 'debug') { }
-  else if (state === 'title') { camera.position.set(0, 9, 32); camLook.set(0, 2, -80); }
+  else if (state === 'title' || state === 'loading' || state === 'done') {
+    camera.position.set(introFrom.x, introFrom.y + 8, introFrom.z + 26); camLook.set(introFrom.x, 2, introFrom.z - 86);
+    if (state === 'loading') { camera.position.set(player.x, py + 8, player.z + 26); camLook.set(player.x, 2, player.z - 86); }
+  }
   else if (state === 'intro' || state === 'play') {
     introT += dt;
     const b = easeIO(introT / 7.5);
-    const ip = new THREE.Vector3(0, 8 - introT * 0.5, 32 - introT * 2.2);
     if (b < 1) {
+      const ip = new THREE.Vector3(introFrom.x, introFrom.y + 8 - introT * 0.5, introFrom.z + 26 - introT * 2.2);
       camera.position.lerpVectors(ip, playPos, b);
-      camLook.lerpVectors(new THREE.Vector3(0, 2, -80), playLook, b);
+      camLook.lerpVectors(new THREE.Vector3(introFrom.x, 2, introFrom.z - 86), playLook, b);
     } else {
       camera.position.lerp(playPos, 1 - Math.exp(-6 * dt));
       camLook.lerp(playLook, 1 - Math.exp(-8 * dt));
     }
+  } else if (state === 'scene') {
+    camera.position.lerp(sceneCam.pos, 1 - Math.exp(-sceneCam.rate * dt));
+    camLook.lerp(sceneCam.look, 1 - Math.exp(-sceneCam.rate * 1.3 * dt));
   } else if (state === 'cut' || state === 'end') {
     let tp, tl, rate = 2.2;
     if (!cut.arrived) {
@@ -1226,6 +1855,7 @@ function updateCamera(dt) {
 
 const PM = new THREE.Matrix4(), PQ = new THREE.Quaternion(), PS = new THREE.Vector3(1, 1, 1);
 function updatePetals(dt, t) {
+  if (!petalMesh.visible) return;
   const c = camera.position;
   for (let i = 0; i < PETALS; i++) {
     const s = petalState[i];
@@ -1243,21 +1873,30 @@ function updatePetals(dt, t) {
 }
 
 /* ============================== 主迴圈 ============================== */
+const focusV = new THREE.Vector3();
 function frame() {
-  const dt = Math.min(clock.getDelta(), 1 / 20), t = clock.elapsedTime;
+  const rdt = Math.min(clock.getDelta(), 1 / 20);
+  const dt = paused ? 0 : rdt;
+  gameTime += dt; const t = gameTime;
+  tickTimers();
   U.uTime.value = t;
-  if (state === 'intro' || state === 'play') updatePlayer(dt);
-  if (state === 'cut' || state === 'end') updateCut(dt);
-  kidUpdate(dt, t);
-  parentsUpdate(dt, t);
-  updateCamera(dt);
-  updatePetals(dt, t);
+  if (!paused) {
+    if (state === 'intro' || state === 'play') updatePlayer(dt);
+    if (chap && chap.update && (state === 'intro' || state === 'play' || state === 'scene')) chap.update(dt);
+    if (chap && chap.n === 3 && (state === 'cut' || state === 'end')) updateCut(dt);
+    updateFrags(dt, t);
+    if (chap && chap.parents) chap.parents(dt, t); else parentsUpdate(dt, t);
+    kidUpdate(dt, t);
+    updateUmbrellas();
+    updateCamera(dt);
+    updatePetals(dt, t);
+  }
   U.uCam.value.copy(camera.position);
   U.uPush.value.set(player.x, 0, player.z);
   camera.updateMatrixWorld();
   U.uSunV.value.copy(sunDir).transformDirection(camera.matrixWorldInverse);
-  const focus = (state === 'cut' || state === 'end') ? HUG : new THREE.Vector3(player.x, H(player.x, player.z), player.z);
-  sun.target.position.copy(focus); sun.position.copy(focus).addScaledVector(sunDir, 120);
+  if (state === 'cut' || state === 'end') focusV.copy(HUG); else focusV.set(player.x, H(player.x, player.z), player.z);
+  sun.target.position.copy(focusV); sun.position.copy(focusV).addScaledVector(sunDir, 120);
   water.material.uniforms.time.value = t * 0.6;
   vignette.uniforms.uTime.value = t % 10;
   Snd.update(clamp(1 - (player.z + 120) / 40, 0, 1), t);
@@ -1265,36 +1904,36 @@ function frame() {
   requestAnimationFrame(frame);
 }
 
-/* ============================== 開場 ============================== */
-async function story() {
-  await sleep(700);
-  await blackLine(L1, 5200);
-  state = 'intro'; introT = 0;
-  blackEl.classList.add('off');
-  await sleep(1600);
-  canMove = true; document.body.classList.add('playing'); state = 'play';
-  $('hint').classList.add('on'); setTimeout(() => $('hint').classList.remove('on'), 10000);
-  await sleep(600);
-  await subLines([[L2, 5200], [L3, 5800], ...WALK_LINES.map(t => [t, 4300])]);
-  walkDone = true;
-}
-$('startBtn').onclick = () => {
-  Snd.init(); $('mute').style.display = 'block';
-  $('titleCard').classList.add('hide');
-  story();
-};
-$('againBtn').onclick = () => { location.href = location.pathname; };
+/* ============================== 選單按鈕 ============================== */
+$('startBtn').onclick = () => { Snd.init(); $('mute').style.display = 'block'; openChapters(); };
+$('backBtn').onclick = () => showCard('titleCard');
+$('nextBtn').onclick = () => startChapter(chap.n + 1);
+$('dnMenuBtn').onclick = () => { goTitle(); openChapters(); };
+$('endChapBtn').onclick = () => { goTitle(); openChapters(); };
+$('endTitleBtn').onclick = () => goTitle();
+$('pauseBtn').onclick = () => { if (canPause()) togglePause(true); };
+$('resumeBtn').onclick = () => togglePause(false);
+$('restartBtn').onclick = () => { const n = chap.n; togglePause(false); startChapter(n); };
+$('pChapBtn').onclick = () => { togglePause(false); goTitle(); openChapters(); };
 
 // 預先編譯 shader 再讓玩家開始
 renderer.compile(scene, camera);
-$('startBtn').disabled = false; $('startBtn').textContent = '開始遊戲';
+$('startBtn').disabled = false; $('startBtn').textContent = '故事模式';
 
-// 除錯鏡頭（?shot=walk / end / hug）
+// 除錯鏡頭（?shot=...&ch=1/2/3）
 if (SHOT) {
-  $('titleCard').classList.add('hide'); blackEl.classList.add('off');
-  state = 'play'; introT = 99; canMove = true;
-  walkDone = true;
-  if (SHOT === 'walk') { player.z = -70; }
+  const n = Number(params.get('ch') || 3);
+  chap = CHAPTERS[n - 1]; applyPreset(chap.preset); chap.setup(); setupFrags(chap); refreshObjective();
+  hideCards(); blackNow(false);
+  state = 'play'; introT = 99; canMove = true; walkDone = true;
+  document.body.classList.add('playing');
+  if (params.get('z')) { player.z = Number(params.get('z')); player.x = Number(params.get('x') || 0); }
+  if (n === 2) { placeP(dad, player.x - 0.72, player.z + 0.1, Math.PI); placeP(mom, player.x + 0.72, player.z + 0.1, Math.PI); }
+  if (SHOT === 'menu') { chap = null; state = 'title'; openChapters(); }
+  if (SHOT === 'walk' && n === 3) { player.z = -70; }
+  if (SHOT === 'carry') { ch.phase = 'scene'; ch.onShoulders = true; ch.walk = 1; state = 'scene'; setObjective(null); }
+  if (SHOT === 'say') { say([['爸爸', '來，爸爸帶你去看更遠的地方！']]); }
+  if (SHOT === 'memo') { showMemo('回憶碎片　1 / 3', CHAPTERS[0].frags[0].text); }
   if (SHOT === 'face' || SHOT === 'kidface') {
     state = 'debug'; player.x = 1.4; player.z = PZ; player.yaw = player.tyaw = Math.PI;
     camera.position.set(SHOT === 'face' ? 0.15 : 1.4, H(0, PZ) + (SHOT === 'face' ? 1.55 : 1.1), PZ - (SHOT === 'face' ? 1.5 : 0.85));
@@ -1302,10 +1941,11 @@ if (SHOT) {
   }
   if (SHOT === 'end') { player.z = -138; player.x = 1.5; }
   if (SHOT === 'hug') { player.z = HUG.z; player.x = HUG.x; startCut(); cut.t = 5; cut.arrived = true; cut.hugT = Number(params.get('ht') || 6); cut.subsStarted = true; }
-  if (SHOT === 'sub') { document.body.classList.add('cine'); subEl.textContent = L2; subEl.classList.add('on'); }
+  if (SHOT === 'sub') { document.body.classList.add('cine'); setSub(L2); subEl.classList.add('on'); }
   camYaw = 0;
-}
+} else goTitle();
 frame();
 </script>
+
 </body>
 </html>
